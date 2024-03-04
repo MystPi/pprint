@@ -1,0 +1,9 @@
+---
+version: 1.0.4
+title: dictionaries use the dict.from_list function when formatted
+---
+dict.from_list([
+  #("baz", 3),
+  #("foo", 1),
+  #("bar", 2),
+])

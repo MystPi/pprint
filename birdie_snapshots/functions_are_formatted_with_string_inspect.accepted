@@ -1,0 +1,9 @@
+---
+version: 1.0.4
+title: functions are formatted with string.inspect
+---
+#(
+  //fn(a) { ... },
+  //fn(a) { ... },
+  //fn(a) { ... },
+)

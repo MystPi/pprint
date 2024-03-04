@@ -1,0 +1,16 @@
+---
+version: 1.0.4
+title: long lists are wrapped and indented
+---
+[
+  "This",
+  "is",
+  "a",
+  "very",
+  "long",
+  "list",
+  "that",
+  "should",
+  "be",
+  "wrapped",
+]

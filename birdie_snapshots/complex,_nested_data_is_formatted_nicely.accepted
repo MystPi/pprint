@@ -1,0 +1,19 @@
+---
+version: 1.0.4
+title: complex, nested data is formatted nicely
+---
+Ok([
+  [
+    [
+      [
+        #(
+          "foo",
+          42,
+          //fn(a) { ... },
+          [[1, 2], [3, 4]],
+          Error("Help, an error!"),
+        ),
+      ],
+    ],
+  ],
+])
