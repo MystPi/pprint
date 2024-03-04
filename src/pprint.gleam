@@ -120,7 +120,8 @@ fn pretty_dict(d: Dict(decoder.Type, decoder.Type), color: Bool) -> Document {
       pretty_type(field.1, color),
     ]
     |> doc.concat
-    |> nobreak_wrap(doc.from_string("#("), doc.from_string(")"))
+    |> doc.prepend(doc.from_string("#("))
+    |> doc.append(doc.from_string(")"))
   })
   |> doc.concat_join([doc.from_string(","), doc.space])
   |> wrap(
@@ -170,7 +171,8 @@ fn pretty_custom_type(
     //
     [single] ->
       single
-      |> nobreak_wrap(open, close)
+      |> doc.prepend(open)
+      |> doc.append(close)
     // However, multiple fields are indented because they would look weird otherwise.
     _ ->
       fields
@@ -224,12 +226,5 @@ fn wrap(
   |> doc.prepend_docs([open, doc.soft_break])
   |> doc.nest(by: 2)
   |> doc.append_docs([doc.break("", trailing), close])
-  |> doc.group
-}
-
-fn nobreak_wrap(document: Document, open: Document, close: Document) -> Document {
-  document
-  |> doc.prepend(open)
-  |> doc.append(close)
   |> doc.group
 }
