@@ -18,7 +18,7 @@ pub type Config {
   Config(
     style_mode: StyleMode,
     bit_array_mode: BitArrayMode,
-    labels_mode: LabelsMode,
+    label_mode: LabelMode,
   )
 }
 
@@ -47,7 +47,7 @@ pub type BitArrayMode {
 /// This option only affects the JavaScript target since Erlang has a different
 /// runtime representation of custom types that omits labels.
 ///
-pub type LabelsMode {
+pub type LabelMode {
   /// Show field labels in custom types.
   /// ```
   /// Foo(42, bar: "bar", baz: "baz")
@@ -242,7 +242,7 @@ fn pretty_custom_type(
 
   let fields =
     list.map(fields, fn(field) {
-      case field, config.labels_mode {
+      case field, config.label_mode {
         decoder.Positional(value), Labels
         | decoder.Positional(value), NoLabels
         | decoder.Labelled(_, value), NoLabels -> pretty_dynamic(value, config)
