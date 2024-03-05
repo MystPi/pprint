@@ -3,6 +3,10 @@ import gleeunit
 import birdie
 import pprint
 
+type Foo {
+  Foo(Int, bar: String, baz: String)
+}
+
 pub fn main() {
   gleeunit.main()
 }
@@ -30,27 +34,10 @@ pub fn complex_data_test() {
   |> birdie.snap("complex, nested data is formatted nicely")
 }
 
-@target(javascript)
-pub fn javascript_coloring_test() {
-  #(Ok(1234), "blah", True, Nil, fn(a) { a }, 3.14, <<1, 2, 3>>)
-  |> pprint.format_colored
-  |> birdie.snap("(js) data is colored depending on its type")
-}
-
-// 🚨 On the erlang target strings are encoded as bit arrays so if we pass it a
-// bit array we'll get out a string. This is a behaviour that will inevitably
-// differ from target to target so we have to write two different tests to
-// make sure it doesn't result in problems.
-//
-// TODO: we could be smarter and ensure we get the exact same behaviour on all
-//       targets by turning bitarrays into strings on the JS target though!
-//       This would ensure that people get consisten outputs most of the times
-//       without having to rely on the `@target` annotation like we're doing.
-@target(erlang)
-pub fn erlang_coloring_test() {
-  #(Ok(1234), "blah", True, Nil, fn(a) { a }, 3.14, <<65>>)
-  |> pprint.format_colored
-  |> birdie.snap("(erlang) data is colored depending on its type")
+pub fn coloring_test() {
+  #(Ok(1234), "blah", True, Nil, fn(a) { a }, 3.14, <<65>>, Foo(1, "2", "3"))
+  |> pprint.styled
+  |> birdie.snap("data is styled depending on its type")
 }
 
 pub fn dict_test() {
@@ -63,4 +50,24 @@ pub fn functions_test() {
   #(fn(a) { a }, fn(a) { a }, fn(a) { a })
   |> pprint.format
   |> birdie.snap("functions are formatted with string.inspect")
+}
+
+const labels_config = pprint.Config(
+  pprint.Styled,
+  pprint.BitArraysAsString,
+  pprint.Labels,
+)
+
+@target(javascript)
+pub fn javascript_labels_test() {
+  Foo(42, "bar", "baz")
+  |> pprint.with_config(labels_config)
+  |> birdie.snap("(javascript) labels are shown")
+}
+
+@target(erlang)
+pub fn erlang_labels_test() {
+  Foo(42, "bar", "baz")
+  |> pprint.with_config(labels_config)
+  |> birdie.snap("(erlang) labels are not shown")
 }

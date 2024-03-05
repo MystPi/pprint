@@ -6,15 +6,68 @@ import gleam/float
 import gleam/dict.{type Dict}
 import gleam/string
 import gleam/dynamic.{type Dynamic}
+import gleam/bit_array
 import glam/doc.{type Document}
 import pprint/decoder
 
 // --- PUBLIC API --------------------------------------------------------------
 
+/// Configuration for the pretty printer.
+///
+pub type Config {
+  Config(
+    style_mode: StyleMode,
+    bit_array_mode: BitArrayMode,
+    labels_mode: LabelsMode,
+  )
+}
+
+/// Styling can be configured with `StyleMode`.
+///
+pub type StyleMode {
+  /// Data structures are styled with ANSI style codes.
+  Styled
+  /// Everything remains unstyled.
+  Unstyled
+}
+
+/// Since Erlang handles BitArrays differently than JavaScript does, the
+/// `BitArraysAsString` config option enables compatibility between the two targets.
+///
+/// These options only affect the JS target, which does not convert bit arrays to
+/// strings by default like Erlang does.
+///
+pub type BitArrayMode {
+  /// Bit arrays will be converted to strings when pretty printed.
+  BitArraysAsString
+  /// Bit arrays will be kept the same.
+  KeepBitArrays
+}
+
+/// This option only affects the JavaScript target since Erlang has a different
+/// runtime representation of custom types that omits labels.
+///
+pub type LabelsMode {
+  /// Show field labels in custom types.
+  /// ```
+  /// Foo(42, bar: "bar", baz: "baz")
+  /// ```
+  Labels
+  /// Leave out field labels.
+  /// ```
+  /// Foo(42, "bar", "baz")
+  /// ```
+  NoLabels
+}
+
 const max_width = 40
 
-/// Pretty print a value with coloring to stderr for debugging purposes. The value
-/// is returned back from the function so it can be used in pipelines.
+/// Pretty print a value with the config below to stderr for debugging purposes.
+/// The value is returned back from the function so it can be used in pipelines.
+///
+/// ```
+/// Config(Styled, KeepBitArrays, Labels)
+/// ```
 ///
 /// # Examples
 ///
@@ -31,71 +84,104 @@ const max_width = 40
 ///
 pub fn debug(value: a) -> a {
   value
-  |> format_colored
+  |> with_config(Config(Styled, KeepBitArrays, Labels))
   |> io.println_error
 
   value
 }
 
-/// Prettify a value into a string, without coloring. This is useful for snapshot
-/// testing with packages such as `birdie`.
+/// Pretty print a value as a string with the following config:
+/// ```
+/// Config(Unstyled, BitArraysAsString, NoLabels)
+/// ```
+/// This function behaves identically on both targets so it can be relied upon
+/// for snapshot testing.
 ///
 pub fn format(value: a) -> String {
-  value
-  |> dynamic.from
-  |> pretty_dynamic(False)
-  |> doc.to_string(max_width)
+  with_config(value, Config(Unstyled, BitArraysAsString, NoLabels))
 }
 
-/// Prettify a value into a string with ANSI coloring.
+/// Pretty print a value as a string with the following config:
+/// ```
+/// Config(Styled, BitArraysAsString, NoLabels)
+/// ```
+/// This function behaves identically on both targets so it can be relied upon
+/// for snapshot testing.
 ///
-pub fn format_colored(value: a) -> String {
+pub fn styled(value: a) -> String {
+  with_config(value, Config(Styled, BitArraysAsString, NoLabels))
+}
+
+/// Pretty print a value as a string with a custom config.
+///
+/// # Examples
+///
+/// ```
+/// [1, 2, 3, 4]
+/// |> pprint.with_config(Config(Color, KeepBitArrays, Labels))
+/// ```
+///
+pub fn with_config(value: a, config: Config) -> String {
   value
   |> dynamic.from
-  |> pretty_dynamic(True)
+  |> pretty_dynamic(config)
   |> doc.to_string(max_width)
 }
 
 // ---- PRETTY PRINTING --------------------------------------------------------
 
-fn pretty_type(value: decoder.Type, color: Bool) -> Document {
+fn pretty_type(value: decoder.Type, config: Config) -> Document {
   case value {
-    decoder.TString(s) ->
-      { "\"" <> s <> "\"" }
-      |> ansi(green, color)
+    decoder.TString(s) -> pretty_string(s, config)
 
     decoder.TInt(i) ->
       int.to_string(i)
-      |> ansi(yellow, color)
+      |> ansi(yellow, config)
 
     decoder.TFloat(f) ->
       float.to_string(f)
-      |> ansi(yellow, color)
+      |> ansi(yellow, config)
 
     decoder.TBool(b) ->
       bool.to_string(b)
-      |> ansi(blue, color)
+      |> ansi(blue, config)
 
     decoder.TBitArray(b) ->
-      string.inspect(b)
-      |> ansi(magenta, color)
+      case config.bit_array_mode {
+        KeepBitArrays -> pretty_bit_array(b, config)
+        BitArraysAsString ->
+          case bit_array.to_string(b) {
+            Ok(s) -> pretty_string(s, config)
+            Error(Nil) -> pretty_bit_array(b, config)
+          }
+      }
 
-    decoder.TNil -> ansi("Nil", blue, color)
-    decoder.TList(items) -> pretty_list(items, color)
-    decoder.TDict(d) -> pretty_dict(d, color)
-    decoder.TTuple(items) -> pretty_tuple(items, color)
-    decoder.TCustom(name, fields) -> pretty_custom_type(name, fields, color)
-    decoder.TForeign(f) -> ansi(f, dim, color)
+    decoder.TNil -> ansi("Nil", blue, config)
+    decoder.TList(items) -> pretty_list(items, config)
+    decoder.TDict(d) -> pretty_dict(d, config)
+    decoder.TTuple(items) -> pretty_tuple(items, config)
+    decoder.TCustom(name, fields) -> pretty_custom_type(name, fields, config)
+    decoder.TForeign(f) -> ansi(f, dim, config)
   }
 }
 
-fn pretty_dynamic(value: Dynamic, color: Bool) -> Document {
+fn pretty_dynamic(value: Dynamic, config: Config) -> Document {
   value
   |> decoder.classify
-  |> pretty_type(color)
+  |> pretty_type(config)
 }
 
-fn pretty_list(items: List(Dynamic), color: Bool) -> Document {
+fn pretty_string(string: String, config: Config) -> Document {
+  { "\"" <> string <> "\"" }
+  |> ansi(green, config)
+}
+
+fn pretty_bit_array(bits: BitArray, config: Config) -> Document {
+  string.inspect(bits)
+  |> ansi(magenta, config)
+}
+
+fn pretty_list(items: List(Dynamic), config: Config) -> Document {
   let items = list.map(items, decoder.classify)
 
   // When the list consists only of numbers, the values are joined with flex spaces
@@ -105,12 +191,12 @@ fn pretty_list(items: List(Dynamic), color: Bool) -> Document {
     _ -> doc.space
   }
 
-  list.map(items, pretty_type(_, color))
+  list.map(items, pretty_type(_, config))
   |> doc.concat_join([doc.from_string(","), space])
   |> wrap(doc.from_string("["), doc.from_string("]"), trailing: ",")
 }
 
-fn pretty_dict(d: Dict(decoder.Type, decoder.Type), color: Bool) -> Document {
+fn pretty_dict(d: Dict(decoder.Type, decoder.Type), config: Config) -> Document {
   dict.to_list(d)
   |> list.sort(fn(one_field, other_field) {
     // We need to sort dicts so that those always have a consistent order.
@@ -121,9 +207,9 @@ fn pretty_dict(d: Dict(decoder.Type, decoder.Type), color: Bool) -> Document {
   |> list.map(fn(field) {
     // Format the dict's items into tuple literals
     [
-      pretty_type(field.0, color),
+      pretty_type(field.0, config),
       doc.from_string(", "),
-      pretty_type(field.1, color),
+      pretty_type(field.1, config),
     ]
     |> doc.concat
     |> doc.prepend(doc.from_string("#("))
@@ -137,16 +223,16 @@ fn pretty_dict(d: Dict(decoder.Type, decoder.Type), color: Bool) -> Document {
   )
 }
 
-fn pretty_tuple(items: List(Dynamic), color: Bool) -> Document {
-  list.map(items, pretty_dynamic(_, color))
+fn pretty_tuple(items: List(Dynamic), config: Config) -> Document {
+  list.map(items, pretty_dynamic(_, config))
   |> doc.concat_join([doc.from_string(","), doc.space])
   |> wrap(doc.from_string("#("), doc.from_string(")"), trailing: ",")
 }
 
 fn pretty_custom_type(
   name: String,
-  fields: List(Dynamic),
-  color: Bool,
+  fields: List(decoder.Field),
+  config: Config,
 ) -> Document {
   // Common built-in constructor names are styled
   let style = case name {
@@ -154,8 +240,22 @@ fn pretty_custom_type(
     _ -> ""
   }
 
-  let fields = list.map(fields, pretty_dynamic(_, color))
-  let open = doc.concat([ansi(name, style, color), doc.from_string("(")])
+  let fields =
+    list.map(fields, fn(field) {
+      case field, config.labels_mode {
+        decoder.Positional(value), Labels
+        | decoder.Positional(value), NoLabels
+        | decoder.Labelled(_, value), NoLabels -> pretty_dynamic(value, config)
+
+        decoder.Labelled(label, value), Labels ->
+          doc.concat([
+            ansi(label <> ": ", dim, config),
+            pretty_dynamic(value, config),
+          ])
+      }
+    })
+
+  let open = doc.concat([ansi(name, style, config), doc.from_string("(")])
   let close = doc.from_string(")")
 
   case fields {
@@ -206,12 +306,12 @@ const bold = "\u{001b}[1m"
 
 const dim = "\u{001b}[2m"
 
-fn ansi(text: String, code: String, enabled: Bool) -> Document {
+fn ansi(text: String, code: String, config: Config) -> Document {
   let text_doc = doc.from_string(text)
 
-  case enabled {
-    False -> text_doc
-    True ->
+  case config.style_mode {
+    Unstyled -> text_doc
+    Styled ->
       doc.concat([
         doc.zero_width_string(code),
         text_doc,

@@ -18,11 +18,13 @@ function decoder_error_no_classify(expected, got) {
 export function decode_custom_type(value) {
   if (value instanceof $gleam.CustomType) {
     const name = value.constructor.name;
-    const fields = Object.values(value);
+    const fields = Object.keys(value).map((label) => {
+      return isNaN(parseInt(label))
+        ? new $decoder.Labelled(label, value[label])
+        : new $decoder.Positional(value[label]);
+    });
 
-    return new $gleam.Ok(
-      new $decoder.TCustom(name, $gleam.toList(fields))
-    );
+    return new $gleam.Ok(new $decoder.TCustom(name, $gleam.toList(fields)));
   }
 
   return decoder_error('CustomType', value);

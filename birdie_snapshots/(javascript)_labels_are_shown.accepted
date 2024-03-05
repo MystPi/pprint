@@ -1,0 +1,5 @@
+---
+version: 1.0.4
+title: (javascript) labels are shown
+---
+Foo[0m([38;5;3m42[0m, [2mbar: [0m[38;5;2m"bar"[0m, [2mbaz: [0m[38;5;2m"baz"[0m)

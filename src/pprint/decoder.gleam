@@ -15,8 +15,13 @@ pub type Type {
   TList(List(Dynamic))
   TDict(Dict(Type, Type))
   TTuple(List(Dynamic))
-  TCustom(name: String, fields: List(Dynamic))
+  TCustom(name: String, fields: List(Field))
   TForeign(String)
+}
+
+pub type Field {
+  Labelled(label: String, value: Dynamic)
+  Positional(value: Dynamic)
 }
 
 // ---- DECODERS ---------------------------------------------------------------

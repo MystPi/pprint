@@ -23,7 +23,7 @@ decode_custom_type(X) ->
             case tuple_to_list(Tuple) of
                 [Atom | Elements] when is_atom(Atom) ->
                     case inspect_maybe_gleam_atom(erlang:atom_to_binary(Atom), none, <<>>) of
-                        {ok, AtomName} -> {ok, {t_custom, AtomName, Elements}};
+                        {ok, AtomName} -> {ok, {t_custom, AtomName, lists:map(fun(E) -> {positional, E} end, Elements)}};
                         {error, nil} -> decode_error("CustomType", X)
                     end;
                 _ -> decode_error("CustomType", X)
