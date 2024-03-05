@@ -30,10 +30,27 @@ pub fn complex_data_test() {
   |> birdie.snap("complex, nested data is formatted nicely")
 }
 
-pub fn coloring_test() {
+@target(javascript)
+pub fn javascript_coloring_test() {
   #(Ok(1234), "blah", True, Nil, fn(a) { a }, 3.14, <<1, 2, 3>>)
   |> pprint.format_colored
-  |> birdie.snap("data is colored depending on its type")
+  |> birdie.snap("(js) data is colored depending on its type")
+}
+
+// 🚨 On the erlang target strings are encoded as bit arrays so if we pass it a
+// bit array we'll get out a string. This is a behaviour that will inevitably
+// differ from target to target so we have to write two different tests to
+// make sure it doesn't result in problems.
+//
+// TODO: we could be smarter and ensure we get the exact same behaviour on all
+//       targets by turning bitarrays into strings on the JS target though!
+//       This would ensure that people get consisten outputs most of the times
+//       without having to rely on the `@target` annotation like we're doing.
+@target(erlang)
+pub fn erlang_coloring_test() {
+  #(Ok(1234), "blah", True, Nil, fn(a) { a }, 3.14, <<65>>)
+  |> pprint.format_colored
+  |> birdie.snap("(erlang) data is colored depending on its type")
 }
 
 pub fn dict_test() {

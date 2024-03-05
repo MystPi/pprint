@@ -112,6 +112,12 @@ fn pretty_list(items: List(Dynamic), color: Bool) -> Document {
 
 fn pretty_dict(d: Dict(decoder.Type, decoder.Type), color: Bool) -> Document {
   dict.to_list(d)
+  |> list.sort(fn(one_field, other_field) {
+    // We need to sort dicts so that those always have a consistent order.
+    let #(one_key, _one_value) = one_field
+    let #(other_key, _other_value) = other_field
+    string.compare(string.inspect(one_key), string.inspect(other_key))
+  })
   |> list.map(fn(field) {
     // Format the dict's items into tuple literals
     [
