@@ -10,7 +10,7 @@ function decoder_error(expected, got) {
 function decoder_error_no_classify(expected, got) {
   return new $gleam.Error(
     $gleam.List.fromArray([
-      new $dynamic.DecodeError(expected, got, $gleam.List.fromArray([])),
+      new $dynamic.DecodeError(expected, got, $gleam.toList([])),
     ])
   );
 }
@@ -21,7 +21,7 @@ export function decode_custom_type(value) {
     const fields = Object.values(value);
 
     return new $gleam.Ok(
-      new $decoder.TCustom(name, $gleam.List.fromArray(fields))
+      new $decoder.TCustom(name, $gleam.toList(fields))
     );
   }
 
@@ -29,7 +29,7 @@ export function decode_custom_type(value) {
 }
 
 export function decode_tuple(value) {
-  if (Array.isArray(value)) return new $gleam.Ok($gleam.List.fromArray(value));
+  if (Array.isArray(value)) return new $gleam.Ok($gleam.toList(value));
   return decoder_error('Tuple', value);
 }
 
