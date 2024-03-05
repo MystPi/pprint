@@ -207,13 +207,13 @@ fn pretty_dict(d: Dict(decoder.Type, decoder.Type), config: Config) -> Document 
   |> list.map(fn(field) {
     // Format the dict's items into tuple literals
     [
+      doc.from_string("#("),
       pretty_type(field.0, config),
       doc.from_string(", "),
       pretty_type(field.1, config),
+      doc.from_string(")"),
     ]
     |> doc.concat
-    |> doc.prepend(doc.from_string("#("))
-    |> doc.append(doc.from_string(")"))
   })
   |> doc.concat_join([doc.from_string(","), doc.space])
   |> wrap(
@@ -275,10 +275,7 @@ fn pretty_custom_type(
     //    ]
     //  )
     //
-    [single] ->
-      single
-      |> doc.prepend(open)
-      |> doc.append(close)
+    [single] -> doc.concat([open, single, close])
     // However, multiple fields are indented because they would look weird otherwise.
     _ ->
       fields
