@@ -105,8 +105,7 @@ pub fn format(value: a) -> String {
 /// ```
 /// Config(Styled, BitArraysAsString, NoLabels)
 /// ```
-/// This function behaves identically on both targets so it can be relied upon
-/// for snapshot testing.
+/// This function behaves identically on both targets.
 ///
 pub fn styled(value: a) -> String {
   with_config(value, Config(Styled, BitArraysAsString, NoLabels))
