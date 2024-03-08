@@ -117,7 +117,7 @@ pub fn styled(value: a) -> String {
 ///
 /// ```
 /// [1, 2, 3, 4]
-/// |> pprint.with_config(Config(Color, KeepBitArrays, Labels))
+/// |> pprint.with_config(Config(Styled, KeepBitArrays, Labels))
 /// ```
 ///
 pub fn with_config(value: a, config: Config) -> String {
