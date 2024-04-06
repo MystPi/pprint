@@ -1,0 +1,15 @@
+---
+version: 1.0.4
+title: data is styled depending on its type
+---
+#(
+  [1mOk[0m([38;5;3m1234[0m),
+  [38;5;2m"blah"[0m,
+  [38;5;4mTrue[0m,
+  [38;5;4mNil[0m,
+  [1mNone[0m,
+  [2m//fn(a) { ... }[0m,
+  [38;5;3m3.14[0m,
+  [38;5;2m"A"[0m,
+  Foo[0m([38;5;3m1[0m, [38;5;2m"2"[0m, [38;5;2m"3"[0m),
+)

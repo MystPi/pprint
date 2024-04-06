@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- The `None` type not being bolded
+
 ## v1.0.1 - 2024-04-06
 
 ### Fixed

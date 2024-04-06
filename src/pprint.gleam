@@ -254,11 +254,12 @@ fn pretty_custom_type(
       }
     })
 
-  let open = doc.concat([ansi(name, style, config), doc.from_string("(")])
+  let name = ansi(name, style, config)
+  let open = doc.concat([name, doc.from_string("(")])
   let close = doc.from_string(")")
 
   case fields {
-    [] -> doc.from_string(name)
+    [] -> name
     // If the constructor has only one field, it is formatted without indenting
     // its field to improve readability. In other words, it is formatted like this
     //

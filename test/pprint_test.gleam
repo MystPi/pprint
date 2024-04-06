@@ -1,5 +1,6 @@
 import gleam/dict
 import gleam/dynamic
+import gleam/option.{None}
 import gleeunit
 import gleeunit/should
 import birdie
@@ -47,7 +48,17 @@ pub fn complex_data_test() {
 }
 
 pub fn coloring_test() {
-  #(Ok(1234), "blah", True, Nil, fn(a) { a }, 3.14, <<65>>, Foo(1, "2", "3"))
+  #(
+    Ok(1234),
+    "blah",
+    True,
+    Nil,
+    None,
+    fn(a) { a },
+    3.14,
+    <<65>>,
+    Foo(1, "2", "3"),
+  )
   |> pprint.styled
   |> birdie.snap("data is styled depending on its type")
 }
