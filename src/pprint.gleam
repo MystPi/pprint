@@ -26,6 +26,10 @@ pub type Config {
 ///
 pub type StyleMode {
   /// Data structures are styled with ANSI style codes.
+  ///
+  /// > ⚠️ **WARNING:** Styling is subject to change *without* a major release!
+  /// This means that this option should only be used for debugging purposes and
+  /// *should not* be used in tests.
   Styled
   /// Everything remains unstyled.
   Unstyled
@@ -106,6 +110,10 @@ pub fn format(value: a) -> String {
 /// Config(Styled, BitArraysAsString, NoLabels)
 /// ```
 /// This function behaves identically on both targets.
+///
+/// > ⚠️ **WARNING:** Styling is subject to change *without* a major release!
+/// This means that this function should only be used for debugging purposes and
+/// *should not* be used in tests.
 ///
 pub fn styled(value: a) -> String {
   with_config(value, Config(Styled, BitArraysAsString, NoLabels))
