@@ -1,5 +1,4 @@
 name = "pprint"
-target = "javascript"
 version = "1.0.0"
 description = "Pretty print values with style!"
 licences = ["Apache-2.0"]
