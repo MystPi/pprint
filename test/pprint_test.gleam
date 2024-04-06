@@ -1,14 +1,26 @@
 import gleam/dict
+import gleam/dynamic
 import gleeunit
+import gleeunit/should
 import birdie
 import pprint
+import pprint/decoder
 
 type Foo {
   Foo(Int, bar: String, baz: String)
+  Wibble
 }
 
 pub fn main() {
   gleeunit.main()
+}
+
+// https://github.com/MystPi/pprint/issues/2
+pub fn custom_type_with_no_fields_decoding_test() {
+  Wibble
+  |> dynamic.from
+  |> decoder.classify
+  |> should.equal(decoder.TCustom("Wibble", []))
 }
 
 pub fn pretty_list_test() {

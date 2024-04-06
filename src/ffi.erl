@@ -19,6 +19,14 @@ decode_tuple(X) ->
 
 decode_custom_type(X) ->
     case X of
+        % Variants with no fields are encoded as a single atom named as the variant.
+        Atom when is_atom(Atom) ->
+            case inspect_maybe_gleam_atom(erlang:atom_to_binary(Atom), none, <<>>) of
+                {ok, AtomName} -> {ok, {t_custom, AtomName, []}};
+                {error, nil} -> decode_error("CustomType", X)
+            end;
+        % Variants with fields are encoded as tuples where the first items is an
+        % atom with the variant's name.
         Tuple when is_tuple(Tuple) ->
             case tuple_to_list(Tuple) of
                 [Atom | Elements] when is_atom(Atom) ->
