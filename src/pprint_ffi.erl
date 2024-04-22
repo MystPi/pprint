@@ -1,4 +1,4 @@
--module(ffi).
+-module(pprint_ffi).
 -export([decode_nil/1, decode_tuple/1, decode_custom_type/1]).
 
 -define(is_digit_char(X), (X > 47 andalso X < 58)).

@@ -53,16 +53,16 @@ fn decode_type(value: Dynamic) -> Result(Type, List(dynamic.DecodeError)) {
   Ok(TForeign(string.inspect(value)))
 }
 
-@external(erlang, "ffi", "decode_custom_type")
-@external(javascript, "../ffi.mjs", "decode_custom_type")
+@external(erlang, "pprint_ffi", "decode_custom_type")
+@external(javascript, "../pprint_ffi.mjs", "decode_custom_type")
 fn decode_custom_type(value: Dynamic) -> Result(Type, List(dynamic.DecodeError))
 
-@external(erlang, "ffi", "decode_tuple")
-@external(javascript, "../ffi.mjs", "decode_tuple")
+@external(erlang, "pprint_ffi", "decode_tuple")
+@external(javascript, "../pprint_ffi.mjs", "decode_tuple")
 fn decode_tuple(
   value: Dynamic,
 ) -> Result(List(Dynamic), List(dynamic.DecodeError))
 
-@external(erlang, "ffi", "decode_nil")
-@external(javascript, "../ffi.mjs", "decode_nil")
+@external(erlang, "pprint_ffi", "decode_nil")
+@external(javascript, "../pprint_ffi.mjs", "decode_nil")
 fn decode_nil(value: Dynamic) -> Result(Nil, List(dynamic.DecodeError))
