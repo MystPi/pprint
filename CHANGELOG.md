@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- FFI module name clashing with other packages
 - The `None` type not being bolded
 
 ## v1.0.1 - 2024-04-06
