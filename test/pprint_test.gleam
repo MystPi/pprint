@@ -1,9 +1,9 @@
+import birdie
 import gleam/dict
 import gleam/dynamic
 import gleam/option.{None}
 import gleeunit
 import gleeunit/should
-import birdie
 import pprint
 import pprint/decoder
 

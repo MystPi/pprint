@@ -1,13 +1,13 @@
-import gleam/io
-import gleam/int
-import gleam/bool
-import gleam/list
-import gleam/float
-import gleam/dict.{type Dict}
-import gleam/string
-import gleam/dynamic.{type Dynamic}
-import gleam/bit_array
 import glam/doc.{type Document}
+import gleam/bit_array
+import gleam/bool
+import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
+import gleam/float
+import gleam/int
+import gleam/io
+import gleam/list
+import gleam/string
 import pprint/decoder
 
 // --- PUBLIC API --------------------------------------------------------------
@@ -252,7 +252,8 @@ fn pretty_custom_type(
       case field, config.label_mode {
         decoder.Positional(value), Labels
         | decoder.Positional(value), NoLabels
-        | decoder.Labelled(_, value), NoLabels -> pretty_dynamic(value, config)
+        | decoder.Labelled(_, value), NoLabels
+        -> pretty_dynamic(value, config)
 
         decoder.Labelled(label, value), Labels ->
           doc.concat([
