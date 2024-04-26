@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [v1.0.3] - 2024-04-26
+
 ### Changed
 
 - Upgraded dependencies and Glam to fix recursion depth errors on the JavaScript target.
