@@ -1,5 +1,5 @@
 name = "pprint"
-version = "1.0.3"
+version = "1.0.4"
 description = "Pretty print values with style!"
 licences = ["Apache-2.0"]
 repository = { type = "github", user = "MystPi", repo = "pprint" }
