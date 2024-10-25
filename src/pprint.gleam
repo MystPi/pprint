@@ -199,8 +199,7 @@ fn pretty_list(items: List(Dynamic), config: Config) -> Document {
   }
 
   list.map(items, pretty_type(_, config))
-  |> doc.concat_join([doc.from_string(","), space])
-  |> wrap(doc.from_string("["), doc.from_string("]"), trailing: ",")
+  |> comma_list_space(doc.from_string("["), doc.from_string("]"), with: space)
 }
 
 fn pretty_dict(d: Dict(decoder.Type, decoder.Type), config: Config) -> Document {
@@ -213,27 +212,15 @@ fn pretty_dict(d: Dict(decoder.Type, decoder.Type), config: Config) -> Document 
   })
   |> list.map(fn(field) {
     // Format the dict's items into tuple literals
-    [
-      doc.from_string("#("),
-      pretty_type(field.0, config),
-      doc.from_string(", "),
-      pretty_type(field.1, config),
-      doc.from_string(")"),
-    ]
-    |> doc.concat
+    [pretty_type(field.0, config), pretty_type(field.1, config)]
+    |> comma_list(doc.from_string("#("), doc.from_string(")"))
   })
-  |> doc.concat_join([doc.from_string(","), doc.space])
-  |> wrap(
-    doc.from_string("dict.from_list(["),
-    doc.from_string("])"),
-    trailing: ",",
-  )
+  |> comma_list(doc.from_string("dict.from_list(["), doc.from_string("])"))
 }
 
 fn pretty_tuple(items: List(Dynamic), config: Config) -> Document {
   list.map(items, pretty_dynamic(_, config))
-  |> doc.concat_join([doc.from_string(","), doc.space])
-  |> wrap(doc.from_string("#("), doc.from_string(")"), trailing: ",")
+  |> comma_list(doc.from_string("#("), doc.from_string(")"))
 }
 
 fn pretty_custom_type(
@@ -286,10 +273,7 @@ fn pretty_custom_type(
     //
     [single] -> doc.concat([open, single, close])
     // However, multiple fields are indented because they would look weird otherwise.
-    _ ->
-      fields
-      |> doc.concat_join([doc.from_string(","), doc.space])
-      |> wrap(open, close, trailing: ",")
+    _ -> fields |> comma_list(open, close)
   }
 }
 
@@ -328,15 +312,29 @@ fn ansi(text: String, code: String, config: Config) -> Document {
 
 // ---- UTILS ------------------------------------------------------------------
 
-fn wrap(
-  document: Document,
+fn comma_list(docs: List(Document), open: Document, close: Document) -> Document {
+  comma_list_space(docs, open, close, with: doc.space)
+}
+
+fn comma_list_space(
+  docs: List(Document),
   open: Document,
   close: Document,
-  trailing trailing: String,
+  with space: Document,
 ) -> Document {
-  document
-  |> doc.prepend_docs([open, doc.soft_break])
-  |> doc.nest(by: 2)
-  |> doc.append_docs([doc.break("", trailing), close])
+  let trailing = case docs {
+    [] -> doc.empty
+    _ -> doc.break("", ",")
+  }
+
+  [
+    open,
+    [doc.soft_break, doc.concat_join(docs, [doc.from_string(","), space])]
+      |> doc.concat
+      |> doc.nest(by: 2),
+    trailing,
+    close,
+  ]
+  |> doc.concat
   |> doc.group
 }

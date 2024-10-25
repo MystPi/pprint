@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- A bug where dictionaries were not being broken the right way. ([#5](https://github.com/MystPi/pprint/issues/5))
+
 ## v1.0.3 - 2024-04-26
 
 ### Changed

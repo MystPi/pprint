@@ -2,6 +2,7 @@ import birdie
 import gleam/dict
 import gleam/dynamic
 import gleam/option.{None}
+import gleam/set
 import gleeunit
 import gleeunit/should
 import pprint
@@ -93,4 +94,25 @@ pub fn erlang_labels_test() {
   Foo(42, "bar", "baz")
   |> pprint.with_config(labels_config)
   |> birdie.snap("(erlang) labels are not shown")
+}
+
+// https://github.com/MystPi/pprint/issues/5
+fn do_dict_breaking_test() {
+  set.new()
+  |> set.insert(
+    "Some item with a lot of text in this set so that a new line is forced",
+  )
+  |> pprint.format
+}
+
+@target(javascript)
+pub fn javascript_list_breaking_test() {
+  do_dict_breaking_test()
+  |> birdie.snap("(javascript) dictionaries can be broken")
+}
+
+@target(erlang)
+pub fn erlang_list_breaking_test() {
+  do_dict_breaking_test()
+  |> birdie.snap("(erlang) dictionaries can be broken")
 }

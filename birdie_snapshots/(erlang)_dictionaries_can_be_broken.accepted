@@ -1,0 +1,12 @@
+---
+version: 1.1.4
+title: (erlang) dictionaries can be broken
+file: ./test/pprint_test.gleam
+test_name: erlang_list_breaking_test
+---
+Set(dict.from_list([
+  #(
+    "Some item with a lot of text in this set so that a new line is forced",
+    [],
+  ),
+]))
