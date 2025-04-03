@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.0.5 - 2025-04-03
+
+### Fixed
+
+- Update to use new decoder API. ([#7](https://github.com/MystPi/pprint/pull/7))
+
 ## v1.0.4 - 2024-10-25
 
 ### Fixed

@@ -34,7 +34,7 @@ pub fn classify(value: Dynamic) -> Type {
 
 /// This decoder will always return `Ok`, as it ends with a catch-all
 /// pattern returning a `TForeign`.
-/// 
+///
 fn type_decoder() -> decode.Decoder(Type) {
   use <- decode.recursive
   decode.one_of(decode.map(decode.int, TInt), [
