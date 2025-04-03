@@ -4,12 +4,10 @@ description = "Pretty print values with style!"
 licences = ["Apache-2.0"]
 repository = { type = "github", user = "MystPi", repo = "pprint" }
 
-internal_modules = [
-  "pprint/decoder"
-]
+internal_modules = ["pprint/decoder"]
 
 [dependencies]
-gleam_stdlib = "~> 0.34 or ~> 1.0"
+gleam_stdlib = ">= 0.50.0 and < 2.0.0"
 glam = "~> 2.0"
 
 [dev-dependencies]
