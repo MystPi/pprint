@@ -119,6 +119,10 @@ pub fn styled(value: a) -> String {
   with_config(value, Config(Styled, BitArraysAsString, NoLabels))
 }
 
+@external(erlang, "pprint_ffi", "from")
+@external(javascript, "./pprint_ffi.mjs", "from")
+pub fn from(value: a) -> Dynamic
+
 /// Pretty print a value as a string with a custom config.
 ///
 /// # Examples
@@ -130,7 +134,7 @@ pub fn styled(value: a) -> String {
 ///
 pub fn with_config(value: a, config: Config) -> String {
   value
-  |> dynamic.from
+  |> from
   |> pretty_dynamic(config)
   |> doc.to_string(max_width)
 }

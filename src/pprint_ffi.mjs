@@ -25,3 +25,7 @@ export function decode_nil(value) {
   if (value === undefined) return new $gleam.Ok(undefined);
   return new $gleam.Error(undefined);
 }
+
+export function from(value) {
+  return value
+}

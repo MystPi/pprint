@@ -1,9 +1,12 @@
 -module(pprint_ffi).
--export([decode_nil/1, decode_tuple/1, decode_custom_type/1]).
+-export([decode_nil/1, decode_tuple/1, decode_custom_type/1, from/1]).
 
 -define(is_digit_char(X), (X > 47 andalso X < 58)).
 -define(is_lowercase_char(X), (X > 96 andalso X < 123)).
 -define(is_underscore_char(X), (X == 95)).
+
+from(X) -> 
+    X.
 
 decode_nil(X) ->
     case X of

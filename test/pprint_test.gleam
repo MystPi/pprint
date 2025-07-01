@@ -1,6 +1,5 @@
 import birdie
 import gleam/dict
-import gleam/dynamic
 import gleam/option.{None}
 import gleam/set
 import gleeunit
@@ -20,7 +19,7 @@ pub fn main() {
 // https://github.com/MystPi/pprint/issues/2
 pub fn custom_type_with_no_fields_decoding_test() {
   Wibble
-  |> dynamic.from
+  |> pprint.from
   |> decoder.classify
   |> should.equal(decoder.TCustom("Wibble", []))
 }
