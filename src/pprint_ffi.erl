@@ -5,7 +5,7 @@
 -define(is_lowercase_char(X), (X > 96 andalso X < 123)).
 -define(is_underscore_char(X), (X == 95)).
 
-from(X) -> 
+from(X) ->
     X.
 
 decode_nil(X) ->
@@ -61,11 +61,10 @@ inspect_maybe_gleam_atom(<<"_", _Rest/binary>>, none, _) ->
     {error, nil};
 inspect_maybe_gleam_atom(<<"_">>, _PrevChar, _Acc) ->
     {error, nil};
-inspect_maybe_gleam_atom(<<"_", _Rest/binary>>, $_, _Acc) ->
+inspect_maybe_gleam_atom(<<"_",  _Rest/binary>>, $_, _Acc) ->
     {error, nil};
-inspect_maybe_gleam_atom(<<First, _Rest/binary>>, _PrevChar, _Acc) when
-    not (?is_lowercase_char(First) orelse ?is_underscore_char(First) orelse ?is_digit_char(First))
-->
+inspect_maybe_gleam_atom(<<First, _Rest/binary>>, _PrevChar, _Acc)
+    when not (?is_lowercase_char(First) orelse ?is_underscore_char(First) orelse ?is_digit_char(First)) ->
     {error, nil};
 inspect_maybe_gleam_atom(<<First, Rest/binary>>, none, Acc) ->
     inspect_maybe_gleam_atom(Rest, First, <<Acc/binary, (uppercase(First))>>);
@@ -77,7 +76,8 @@ inspect_maybe_gleam_atom(<<First, Rest/binary>>, _PrevChar, Acc) ->
     inspect_maybe_gleam_atom(Rest, First, <<Acc/binary, First>>);
 inspect_maybe_gleam_atom(<<>>, _PrevChar, Acc) ->
     {ok, Acc};
-inspect_maybe_gleam_atom(_, _, _) ->
+% The following function body is different from the stdlib:
+inspect_maybe_gleam_atom(_First, _Rest, _Acc) ->
     {error, nil}.
 
 uppercase(X) -> X - 32.
