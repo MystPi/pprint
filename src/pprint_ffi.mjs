@@ -1,5 +1,5 @@
-import * as $gleam from './gleam.mjs';
-import * as $decoder from './pprint/decoder.mjs';
+import * as $gleam from "./gleam.mjs";
+import * as $decoder from "./pprint/decoder.mjs";
 
 export function decode_custom_type(value) {
   if (value instanceof $gleam.CustomType) {
@@ -27,5 +27,5 @@ export function decode_nil(value) {
 }
 
 export function from(value) {
-  return value
+  return value;
 }
