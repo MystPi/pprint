@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.0.6 - 2025-07-05
+
+### Fixed
+
+- Upgraded dependencies to fix recent `gleam_stdlib` compatibility.
+
 ## v1.0.5 - 2025-04-03
 
 ### Fixed
