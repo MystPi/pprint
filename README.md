@@ -9,7 +9,7 @@
 💄 Pretty print values with style!
 
 ```sh
-gleam add pprint --dev
+gleam add pprint@1 --dev
 ```
 
 ```gleam
