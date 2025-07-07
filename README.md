@@ -1,7 +1,10 @@
 # pprint
 
 [![Package Version](https://img.shields.io/hexpm/v/pprint)](https://hex.pm/packages/pprint)
+[![Erlang-compatible](https://img.shields.io/badge/target-erlang-b83998)](https://www.erlang.org/)
+[![JavaScript Compatible](https://img.shields.io/badge/target-javascript-f3e155)](https://en.wikipedia.org/wiki/JavaScript)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/pprint/)
+[![CI Test](https://github.com/MystPi/pprint/actions/workflows/test.yml/badge.svg?branch=main&amp;event=push)](https://github.com/MystPi/pprint/actions/workflows/test.yml)
 
 💄 Pretty print values with style!
 
